@@ -13,6 +13,9 @@ namespace helloserve.Test.ExchangeRateApi
     [TestClass]
     public class ExchangeRatesApiClientTests
     {
+        private const string exchangeRatesHttpResult = "{ \"rates\": { \"EUR\": 0.0923668071, \"JPY\": 12.2302889234, \"USD\": 0.1337563733, \"GBP\": 0.0828714993 }, \"base\": \"ZAR\", \"date\": \"2010-01-12\" }";
+        private const string exchangeRatesRangeHttpResult = "{\"rates\":{\"2018-01-03\":{\"JPY\":9.0678222312,\"ILS\":0.2794047499},\"2018-01-02\":{\"JPY\":9.0838926174,\"ILS\":0.2798187919}},\"start_at\":\"2018-01-01\",\"base\":\"ZAR\",\"end_at\":\"2018-01-03\"}";
+
         private readonly ExchangeRatesApiOptions options = new ExchangeRatesApiOptions();
         private HttpClient httpClient;
 
@@ -30,7 +33,6 @@ namespace helloserve.Test.ExchangeRateApi
         {
             //arrange
             var handler = Initialize(null);
-            var client = Client;
 
             //act
             Client.GetLatestRates();
@@ -45,7 +47,6 @@ namespace helloserve.Test.ExchangeRateApi
             //arrange
             var handler = Initialize(null);
             string baseCurrency = "USD";
-            var client = Client;
 
             //act
             Client.GetLatestRates(baseCurrency);
@@ -60,7 +61,6 @@ namespace helloserve.Test.ExchangeRateApi
             //arrange
             var handler = Initialize(null);
             string[] symbols = new string[] { "USD", "GBP" };
-            var client = Client;
 
             //act
             Client.GetLatestRates(symbols);
@@ -76,7 +76,6 @@ namespace helloserve.Test.ExchangeRateApi
             var handler = Initialize(null);
             string baseCurrency = "ZAR";
             string[] symbols = new string[] { "USD", "GBP" };
-            var client = Client;
 
             //act
             Client.GetLatestRates(baseCurrency, symbols);
@@ -90,7 +89,6 @@ namespace helloserve.Test.ExchangeRateApi
         {
             //arrange
             var handler = Initialize(null);
-            var client = Client;
 
             //act
             await Client.GetLatestRatesAsync();
@@ -105,7 +103,6 @@ namespace helloserve.Test.ExchangeRateApi
             //arrange
             var handler = Initialize(null);
             string baseCurrency = "USD";
-            var client = Client;
 
             //act
             await Client.GetLatestRatesAsync(baseCurrency);
@@ -120,7 +117,6 @@ namespace helloserve.Test.ExchangeRateApi
             //arrange
             var handler = Initialize(null);
             string[] symbols = new string[] { "USD", "GBP" };
-            var client = Client;
 
             //act
             await Client.GetLatestRatesAsync(symbols);
@@ -133,8 +129,7 @@ namespace helloserve.Test.ExchangeRateApi
         public async Task GetLatestRatesAsync_WithBaseCurrencyAndSymbols_Verify()
         {
             //arrange
-            string httpResult = "{ \"rates\": { \"EUR\": 0.0923668071, \"JPY\": 12.2302889234, \"USD\": 0.1337563733, \"GBP\": 0.0828714993 }, \"base\": \"ZAR\", \"date\": \"2010-01-12\" }";
-            var handler = Initialize(() => httpResult);
+            var handler = Initialize(() => exchangeRatesHttpResult);
             string baseCurrency = "ZAR";
             string[] symbols = new string[] { "USD", "GBP" };
             var client = Client;
@@ -164,7 +159,6 @@ namespace helloserve.Test.ExchangeRateApi
             //arrange
             var handler = Initialize(null);
             DateTime dateTime = new DateTime(2010, 1, 12);
-            var client = Client;
 
             //act
             Client.GetRatesForDate(dateTime);
@@ -180,7 +174,6 @@ namespace helloserve.Test.ExchangeRateApi
             var handler = Initialize(null);
             DateTime dateTime = new DateTime(2010, 1, 12);
             string baseCurrency = "USD";
-            var client = Client;
 
             //act
             Client.GetRatesForDate(dateTime, baseCurrency);
@@ -196,7 +189,6 @@ namespace helloserve.Test.ExchangeRateApi
             var handler = Initialize(null);
             DateTime dateTime = new DateTime(2010, 1, 12);
             string[] symbols = new string[] { "USD", "GBP" };
-            var client = Client;
 
             //act
             Client.GetRatesForDate(dateTime, symbols);
@@ -213,7 +205,6 @@ namespace helloserve.Test.ExchangeRateApi
             DateTime dateTime = new DateTime(2010, 1, 12);
             string baseCurrency = "ZAR";
             string[] symbols = new string[] { "USD", "GBP" };
-            var client = Client;
 
             //act
             Client.GetRatesForDate(dateTime, baseCurrency, symbols);
@@ -228,7 +219,6 @@ namespace helloserve.Test.ExchangeRateApi
             //arrange
             var handler = Initialize(null);
             DateTime dateTime = new DateTime(2010, 1, 12);
-            var client = Client;
 
             //act
             await Client.GetRatesForDateAsync(dateTime);
@@ -244,7 +234,6 @@ namespace helloserve.Test.ExchangeRateApi
             var handler = Initialize(null);
             DateTime dateTime = new DateTime(2010, 1, 12);
             string baseCurrency = "USD";
-            var client = Client;
 
             //act
             await Client.GetRatesForDateAsync(dateTime, baseCurrency);
@@ -260,7 +249,6 @@ namespace helloserve.Test.ExchangeRateApi
             var handler = Initialize(null);
             DateTime dateTime = new DateTime(2010, 1, 12);
             string[] symbols = new string[] { "USD", "GBP" };
-            var client = Client;
 
             //act
             await Client.GetRatesForDateAsync(dateTime, symbols);
@@ -270,12 +258,12 @@ namespace helloserve.Test.ExchangeRateApi
         }
 
         [TestMethod]
-        public async Task GetRatedForDateAsync_WithBaseCurrencyAndSymbols_Verify()
+        public async Task GetRatesForDateAsync_WithBaseCurrencyAndSymbols_Verify()
         {
             //arrange
             string httpResult = "{ \"rates\": { \"EUR\": 0.0923668071, \"JPY\": 12.2302889234, \"USD\": 0.1337563733, \"GBP\": 0.0828714993 }, \"base\": \"ZAR\", \"date\": \"2010-01-12\" }";
-            DateTime dateTime = new DateTime(2010, 1, 12);
             var handler = Initialize(() => httpResult);
+            DateTime dateTime = new DateTime(2010, 1, 12);
             string baseCurrency = "ZAR";
             string[] symbols = new string[] { "USD", "GBP" };
             var client = Client;
@@ -298,6 +286,149 @@ namespace helloserve.Test.ExchangeRateApi
             Assert.AreEqual(0.0828714993D, actualResult.Rates["GBP"]);
         }
 
+        [TestMethod]
+        public void GetRatesForDateRange_Verify()
+        {
+            //arrange
+            var handler = Initialize(() => exchangeRatesRangeHttpResult);
+            DateTime fromDate = new DateTime(2018, 1, 1);
+            DateTime toDate = new DateTime(2018, 1, 3);
+            var client = Client;
+
+            //act
+            ExchangeRatesRange actualResult = Client.GetRatesForDateRange(fromDate, toDate);
+
+            //assert
+            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2018-01-01&end_at=2018-01-03", handler.Requests[0].RequestUri.AbsoluteUri);
+        }
+
+        [TestMethod]
+        public void GetRatesForDateRange_WithBaseCurrency_Verify()
+        {
+            //arrange
+            var handler = Initialize(() => exchangeRatesRangeHttpResult);
+            DateTime fromDate = new DateTime(2018, 1, 1);
+            DateTime toDate = new DateTime(2018, 1, 3);
+            string baseCurrency = "ZAR";
+            var client = Client;
+
+            //act
+            ExchangeRatesRange actualResult = Client.GetRatesForDateRange(fromDate, toDate, baseCurrency);
+
+            //assert
+            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2018-01-01&end_at=2018-01-03&base=ZAR", handler.Requests[0].RequestUri.AbsoluteUri);
+        }
+
+        [TestMethod]
+        public void GetRatesForDateRange_WithSymbols_Verify()
+        {
+            //arrange
+            var handler = Initialize(() => exchangeRatesRangeHttpResult);
+            DateTime fromDate = new DateTime(2018, 1, 1);
+            DateTime toDate = new DateTime(2018, 1, 3);
+            string[] symbols = new string[] { "ILS", "JPY" };
+            var client = Client;
+
+            //act
+            ExchangeRatesRange actualResult = Client.GetRatesForDateRange(fromDate, toDate, symbols);
+
+            //assert
+            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2018-01-01&end_at=2018-01-03&symbols=ILS,JPY", handler.Requests[0].RequestUri.AbsoluteUri);
+        }
+
+        [TestMethod]
+        public void GetRatesForDateRange_WithBaseCurrencyAndSymbols_Verify()
+        {
+            //arrange
+            var handler = Initialize(() => exchangeRatesRangeHttpResult);
+            DateTime fromDate = new DateTime(2018, 1, 1);
+            DateTime toDate = new DateTime(2018, 1, 3);
+            string baseCurrency = "ZAR";
+            string[] symbols = new string[] { "ILS", "JPY" };
+            var client = Client;
+
+            //act
+            ExchangeRatesRange actualResult = Client.GetRatesForDateRange(fromDate, toDate, baseCurrency, symbols);
+
+            //assert
+            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2018-01-01&end_at=2018-01-03&base=ZAR&symbols=ILS,JPY", handler.Requests[0].RequestUri.AbsoluteUri);
+        }
+
+        [TestMethod]
+        public async Task GetRatesForDateRangeAsync_Verify()
+        {
+            //arrange
+            var handler = Initialize(() => exchangeRatesRangeHttpResult);
+            DateTime fromDate = new DateTime(2018, 1, 1);
+            DateTime toDate = new DateTime(2018, 1, 3);
+            var client = Client;
+
+            //act
+            ExchangeRatesRange actualResult = await Client.GetRatesForDateRangeAsync(fromDate, toDate);
+
+            //assert
+            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2018-01-01&end_at=2018-01-03", handler.Requests[0].RequestUri.AbsoluteUri);
+        }
+
+        [TestMethod]
+        public async Task GetRatesForDateRangeAsync_WithBaseCurrency_Verify()
+        {
+            //arrange
+            var handler = Initialize(() => exchangeRatesRangeHttpResult);
+            DateTime fromDate = new DateTime(2018, 1, 1);
+            DateTime toDate = new DateTime(2018, 1, 3);
+            string baseCurrency = "ZAR";
+            var client = Client;
+
+            //act
+            ExchangeRatesRange actualResult = await Client.GetRatesForDateRangeAsync(fromDate, toDate, baseCurrency);
+
+            //assert
+            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2018-01-01&end_at=2018-01-03&base=ZAR", handler.Requests[0].RequestUri.AbsoluteUri);
+        }
+
+        [TestMethod]
+        public async Task GetRatesForDateRangeAsync_WithSymbols_Verify()
+        {
+            //arrange
+            var handler = Initialize(() => exchangeRatesRangeHttpResult);
+            DateTime fromDate = new DateTime(2018, 1, 1);
+            DateTime toDate = new DateTime(2018, 1, 3);
+            string[] symbols = new string[] { "ILS", "JPY" };
+            var client = Client;
+
+            //act
+            ExchangeRatesRange actualResult = await Client.GetRatesForDateRangeAsync(fromDate, toDate, symbols);
+
+            //assert
+            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2018-01-01&end_at=2018-01-03&symbols=ILS,JPY", handler.Requests[0].RequestUri.AbsoluteUri);
+        }
+
+        [TestMethod]
+        public async Task GetRatesForDateRangeAsync_WithBaseCurrencyAndSymbols_Verify()
+        {
+            //arrange
+            var handler = Initialize(() => exchangeRatesRangeHttpResult);
+            DateTime fromDate = new DateTime(2018, 1, 1);
+            DateTime toDate = new DateTime(2018, 1, 3);
+            string baseCurrency = "ZAR";
+            string[] symbols = new string[] { "ILS", "JPY" };
+            var client = Client;
+
+            //act
+            ExchangeRatesRange actualResult = await Client.GetRatesForDateRangeAsync(fromDate, toDate, baseCurrency, symbols);
+
+            //assert
+            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2018-01-01&end_at=2018-01-03&base=ZAR&symbols=ILS,JPY", handler.Requests[0].RequestUri.AbsoluteUri);
+            Assert.AreEqual(baseCurrency, actualResult.Base);
+            Assert.AreEqual(fromDate, actualResult.StartAt);
+            Assert.AreEqual(toDate, actualResult.EndAt);
+            Assert.AreEqual(2, actualResult.RateRanges.Count);
+            Assert.IsTrue(actualResult.RateRanges.ContainsKey(toDate));
+            Assert.IsTrue(actualResult.RateRanges.ContainsKey(toDate.AddDays(-1)));
+            Assert.AreEqual(2, actualResult.RateRanges[toDate].Count);
+            Assert.AreEqual(9.0678222312D, actualResult.RateRanges[toDate]["JPY"]);
+        }
     }
 
     class TestHttpMessageHandler : HttpMessageHandler

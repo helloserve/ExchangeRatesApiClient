@@ -25,5 +25,15 @@ namespace helloserve.ExchangeRatesApi
         Task<ExchangeRates> GetRatesForDateAsync(DateTime date, params string[] currencyCodes);
         Task<ExchangeRates> GetRatesForDateAsync(DateTime date, string baseCurrencyCode);
         Task<ExchangeRates> GetRatesForDateAsync(DateTime date, string baseCurrencyCode, params string[] currencyCodes);
+
+        ExchangeRatesRange GetRatesForDateRange(DateTime fromDate, DateTime toDate);
+        ExchangeRatesRange GetRatesForDateRange(DateTime fromDate, DateTime toDate, params string[] currencyCodes);
+        ExchangeRatesRange GetRatesForDateRange(DateTime fromDate, DateTime toDate, string baseCurrencyCode);
+        ExchangeRatesRange GetRatesForDateRange(DateTime fromDate, DateTime toDate, string baseCurrencyCode, params string[] currencyCodes);
+
+        Task<ExchangeRatesRange> GetRatesForDateRangeAsync(DateTime fromDate, DateTime toDate);
+        Task<ExchangeRatesRange> GetRatesForDateRangeAsync(DateTime fromDate, DateTime toDate, params string[] currencyCodes);
+        Task<ExchangeRatesRange> GetRatesForDateRangeAsync(DateTime fromDate, DateTime toDate, string baseCurrencyCode);
+        Task<ExchangeRatesRange> GetRatesForDateRangeAsync(DateTime fromDate, DateTime toDate, string baseCurrencyCode, params string[] currencyCodes);
     }
 }
