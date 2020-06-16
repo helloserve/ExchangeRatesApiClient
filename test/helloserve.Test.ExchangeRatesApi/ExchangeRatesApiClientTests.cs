@@ -14,7 +14,7 @@ namespace helloserve.Test.ExchangeRateApi
     public class ExchangeRatesApiClientTests
     {
         private const string exchangeRatesHttpResult = "{ \"rates\": { \"EUR\": 0.0923668071, \"JPY\": 12.2302889234, \"USD\": 0.1337563733, \"GBP\": 0.0828714993 }, \"base\": \"ZAR\", \"date\": \"2010-01-12\" }";
-        private const string exchangeRatesRangeHttpResult = "{\"rates\":{\"2018-01-03\":{\"JPY\":9.0678222312,\"ILS\":0.2794047499},\"2018-01-02\":{\"JPY\":9.0838926174,\"ILS\":0.2798187919}},\"start_at\":\"2018-01-01\",\"base\":\"ZAR\",\"end_at\":\"2018-01-03\"}";
+        private const string exchangeRatesRangeHttpResult = "{\"rates\":{\"2018-01-03\":{\"JPY\":9.0678222312,\"ILS\":0.2794047499},\"2018-01-02\":{\"JPY\":9.0838926174,\"ILS\":0.2798187919}},\"start_at\":\"2017-12-31\",\"base\":\"ZAR\",\"end_at\":\"2018-01-03\"}";
 
         private readonly ExchangeRatesApiOptions options = new ExchangeRatesApiOptions();
         private HttpClient httpClient;
@@ -299,7 +299,7 @@ namespace helloserve.Test.ExchangeRateApi
             ExchangeRatesRange actualResult = Client.GetRatesForDateRange(fromDate, toDate);
 
             //assert
-            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2018-01-01&end_at=2018-01-03", handler.Requests[0].RequestUri.AbsoluteUri);
+            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2017-12-31&end_at=2018-01-03", handler.Requests[0].RequestUri.AbsoluteUri);
         }
 
         [TestMethod]
@@ -316,7 +316,7 @@ namespace helloserve.Test.ExchangeRateApi
             ExchangeRatesRange actualResult = Client.GetRatesForDateRange(fromDate, toDate, baseCurrency);
 
             //assert
-            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2018-01-01&end_at=2018-01-03&base=ZAR", handler.Requests[0].RequestUri.AbsoluteUri);
+            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2017-12-31&end_at=2018-01-03&base=ZAR", handler.Requests[0].RequestUri.AbsoluteUri);
         }
 
         [TestMethod]
@@ -333,7 +333,7 @@ namespace helloserve.Test.ExchangeRateApi
             ExchangeRatesRange actualResult = Client.GetRatesForDateRange(fromDate, toDate, symbols);
 
             //assert
-            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2018-01-01&end_at=2018-01-03&symbols=ILS,JPY", handler.Requests[0].RequestUri.AbsoluteUri);
+            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2017-12-31&end_at=2018-01-03&symbols=ILS,JPY", handler.Requests[0].RequestUri.AbsoluteUri);
         }
 
         [TestMethod]
@@ -351,7 +351,7 @@ namespace helloserve.Test.ExchangeRateApi
             ExchangeRatesRange actualResult = Client.GetRatesForDateRange(fromDate, toDate, baseCurrency, symbols);
 
             //assert
-            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2018-01-01&end_at=2018-01-03&base=ZAR&symbols=ILS,JPY", handler.Requests[0].RequestUri.AbsoluteUri);
+            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2017-12-31&end_at=2018-01-03&base=ZAR&symbols=ILS,JPY", handler.Requests[0].RequestUri.AbsoluteUri);
         }
 
         [TestMethod]
@@ -367,7 +367,7 @@ namespace helloserve.Test.ExchangeRateApi
             ExchangeRatesRange actualResult = await Client.GetRatesForDateRangeAsync(fromDate, toDate);
 
             //assert
-            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2018-01-01&end_at=2018-01-03", handler.Requests[0].RequestUri.AbsoluteUri);
+            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2017-12-31&end_at=2018-01-03", handler.Requests[0].RequestUri.AbsoluteUri);
         }
 
         [TestMethod]
@@ -384,7 +384,7 @@ namespace helloserve.Test.ExchangeRateApi
             ExchangeRatesRange actualResult = await Client.GetRatesForDateRangeAsync(fromDate, toDate, baseCurrency);
 
             //assert
-            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2018-01-01&end_at=2018-01-03&base=ZAR", handler.Requests[0].RequestUri.AbsoluteUri);
+            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2017-12-31&end_at=2018-01-03&base=ZAR", handler.Requests[0].RequestUri.AbsoluteUri);
         }
 
         [TestMethod]
@@ -401,7 +401,7 @@ namespace helloserve.Test.ExchangeRateApi
             ExchangeRatesRange actualResult = await Client.GetRatesForDateRangeAsync(fromDate, toDate, symbols);
 
             //assert
-            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2018-01-01&end_at=2018-01-03&symbols=ILS,JPY", handler.Requests[0].RequestUri.AbsoluteUri);
+            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2017-12-31&end_at=2018-01-03&symbols=ILS,JPY", handler.Requests[0].RequestUri.AbsoluteUri);
         }
 
         [TestMethod]
@@ -419,9 +419,9 @@ namespace helloserve.Test.ExchangeRateApi
             ExchangeRatesRange actualResult = await Client.GetRatesForDateRangeAsync(fromDate, toDate, baseCurrency, symbols);
 
             //assert
-            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2018-01-01&end_at=2018-01-03&base=ZAR&symbols=ILS,JPY", handler.Requests[0].RequestUri.AbsoluteUri);
+            Assert.AreEqual("https://api.exchangeratesapi.io/history?start_at=2017-12-31&end_at=2018-01-03&base=ZAR&symbols=ILS,JPY", handler.Requests[0].RequestUri.AbsoluteUri);
             Assert.AreEqual(baseCurrency, actualResult.Base);
-            Assert.AreEqual(fromDate, actualResult.StartAt);
+            Assert.AreEqual(fromDate.AddDays(-1), actualResult.StartAt);
             Assert.AreEqual(toDate, actualResult.EndAt);
             Assert.AreEqual(2, actualResult.RateRanges.Count);
             Assert.IsTrue(actualResult.RateRanges.ContainsKey(toDate));

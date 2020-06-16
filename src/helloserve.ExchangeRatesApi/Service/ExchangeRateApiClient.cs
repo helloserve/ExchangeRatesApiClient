@@ -163,7 +163,7 @@ namespace helloserve.ExchangeRatesApi.Service
                     if (fromDate.HasValue && toDate.HasValue)
                     {
                         builder.Append("start_at=");
-                        builder.Append(fromDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture.DateTimeFormat));
+                        builder.Append(fromDate.Value.AddDays(-1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture.DateTimeFormat));
                         builder.Append("&");
                         builder.Append("end_at=");
                         builder.Append(toDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture.DateTimeFormat));
