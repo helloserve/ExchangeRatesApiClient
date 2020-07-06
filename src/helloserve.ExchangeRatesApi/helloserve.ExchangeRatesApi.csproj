@@ -9,6 +9,8 @@
     <PackageProjectUrl>https://github.com/helloserve/ExchangeRatesApiClient</PackageProjectUrl>
     <RepositoryUrl>https://github.com/helloserve/ExchangeRatesApiClient</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <Authors>Henk Roux</Authors>
+    <Company>helloserve Productions</Company>
   </PropertyGroup>
 
   <ItemGroup>
