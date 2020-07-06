@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Net.Http;
@@ -163,7 +164,7 @@ namespace helloserve.ExchangeRatesApi.Service
                     if (fromDate.HasValue && toDate.HasValue)
                     {
                         builder.Append("start_at=");
-                        builder.Append(fromDate.Value.AddDays(-1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture.DateTimeFormat));
+                        builder.Append(fromDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture.DateTimeFormat));
                         builder.Append("&");
                         builder.Append("end_at=");
                         builder.Append(toDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture.DateTimeFormat));
@@ -192,6 +193,8 @@ namespace helloserve.ExchangeRatesApi.Service
                     query = builder.ToString();
                 }
                 Uri uri = new Uri(new Uri(options.ApiUrl), $"{relativeUri}{query}");
+                var stopwatch = Stopwatch.StartNew();
+                logger?.LogInformation($"GET {uri.AbsoluteUri}");
                 var response = await httpClient.GetAsync(uri);
                 using (Stream s = await response.Content.ReadAsStreamAsync())
                 using (StreamReader reader = new StreamReader(s))
@@ -199,6 +202,8 @@ namespace helloserve.ExchangeRatesApi.Service
                 {
                     JsonSerializer serializer = new JsonSerializer();
                     var result = serializer.Deserialize<T>(jreader);
+                    stopwatch.Stop();
+                    logger?.LogDebug($"GET completed in {stopwatch.ElapsedMilliseconds}ms");
                     return result;
                 }
             }
