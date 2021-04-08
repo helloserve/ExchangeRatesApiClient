@@ -1,7 +1,9 @@
 ﻿using helloserve.ExchangeRatesApi.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -155,43 +157,28 @@ namespace helloserve.ExchangeRatesApi.Service
         {
             try
             {
-                string query = string.Empty;
+                List<KeyValuePair<string, string>> queryParameters = new List<KeyValuePair<string, string>>();
+                queryParameters.Add(new KeyValuePair<string, string>("access_key", options.ApiKey));
+
                 if ((fromDate.HasValue && toDate.HasValue) || !string.IsNullOrEmpty(baseCurrencyCode) || (currencyCodes is object && currencyCodes.Length > 0))
                 {
-                    StringBuilder builder = new StringBuilder();
-                    builder.Append("?");
-                    int queryCount = 0;
                     if (fromDate.HasValue && toDate.HasValue)
                     {
-                        builder.Append("start_at=");
-                        builder.Append(fromDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture.DateTimeFormat));
-                        builder.Append("&");
-                        builder.Append("end_at=");
-                        builder.Append(toDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture.DateTimeFormat));
-                        queryCount++;
+                        queryParameters.Add(new KeyValuePair<string, string>("start_at", fromDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture.DateTimeFormat)));
+                        queryParameters.Add(new KeyValuePair<string, string>("end_at", toDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture.DateTimeFormat)));
                     }
+
                     if (!string.IsNullOrEmpty(baseCurrencyCode))
                     {
-                        if (queryCount > 0)
-                        {
-                            builder.Append("&");
-                        }
-                        builder.Append("base=");
-                        builder.Append(baseCurrencyCode);
-                        queryCount++;
+                        queryParameters.Add(new KeyValuePair<string, string>("base", baseCurrencyCode));
                     }
+
                     if (currencyCodes is object && currencyCodes.Length > 0)
                     {
-                        if (queryCount > 0)
-                        {
-                            builder.Append("&");
-                        }
-                        builder.Append("symbols=");
-                        builder.Append(string.Join(",", currencyCodes));
-                        queryCount++;
+                        queryParameters.Add(new KeyValuePair<string, string>("symbols", string.Join(",", currencyCodes)));
                     }
-                    query = builder.ToString();
                 }
+                string query = QueryString.Create(queryParameters).Value;
                 Uri uri = new Uri(new Uri(options.ApiUrl), $"{relativeUri}{query}");
                 var stopwatch = Stopwatch.StartNew();
                 logger?.LogInformation($"GET {uri.AbsoluteUri}");
