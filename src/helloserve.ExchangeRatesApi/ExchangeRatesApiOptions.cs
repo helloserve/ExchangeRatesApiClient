@@ -3,5 +3,6 @@
     public class ExchangeRatesApiOptions
     {
         public string ApiUrl = "https://api.exchangeratesapi.io/";
+        public string ApiKey = "";
     }
 }
