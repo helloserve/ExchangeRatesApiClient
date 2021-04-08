@@ -11,6 +11,7 @@
     <RepositoryType>git</RepositoryType>
     <Authors>Henk Roux</Authors>
     <Company>helloserve Productions</Company>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
