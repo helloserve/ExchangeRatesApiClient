@@ -7,6 +7,15 @@ namespace helloserve.ExchangeRatesApi.Models
     /// </summary>
     public class ExchangeRates
     {
+        public ExchangeRates() { }
+
+        internal ExchangeRates(ExchangeRatesResponse response)
+        {
+            Base = response.Base;
+            Date = response.Date;
+            Rates = response.Rates;
+        }
+
         /// <summary>
         /// The currency that these rates can be used to convert from
         /// </summary>
