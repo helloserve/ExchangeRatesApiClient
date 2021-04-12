@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace helloserve.ExchangeRatesApi.Service
@@ -61,9 +60,10 @@ namespace helloserve.ExchangeRatesApi.Service
             return GetLatestRatesAsync(baseCurrencyCode, currencyCodes: null);
         }
 
-        public Task<ExchangeRates> GetLatestRatesAsync(string baseCurrencyCode, params string[] currencyCodes)
+        public async Task<ExchangeRates> GetLatestRatesAsync(string baseCurrencyCode, params string[] currencyCodes)
         {
-            return GetRatesForUriAsync<ExchangeRates>("latest", fromDate: null, toDate: null, baseCurrencyCode, currencyCodes);
+            var response = await GetRatesForUriAsync<ExchangeRatesResponse>("latest", fromDate: null, toDate: null, baseCurrencyCode, currencyCodes).ConfigureAwait(false);
+            return new ExchangeRates(response);
         }
 
         public ExchangeRates GetRatesForDate(DateTime date)
@@ -101,9 +101,10 @@ namespace helloserve.ExchangeRatesApi.Service
             return GetRatesForDateAsync(date, baseCurrencyCode, currencyCodes: null);
         }
 
-        public Task<ExchangeRates> GetRatesForDateAsync(DateTime date, string baseCurrencyCode, params string[] currencyCodes)
+        public async Task<ExchangeRates> GetRatesForDateAsync(DateTime date, string baseCurrencyCode, params string[] currencyCodes)
         {
-            return GetRatesForUriAsync<ExchangeRates>(date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture.DateTimeFormat), fromDate: null, toDate: null, baseCurrencyCode, currencyCodes);
+            var response = await GetRatesForUriAsync<ExchangeRatesResponse>(date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture.DateTimeFormat), fromDate: null, toDate: null, baseCurrencyCode, currencyCodes).ConfigureAwait(false);
+            return new ExchangeRates(response);
         }
 
         public ExchangeRatesRange GetRatesForDateRange(DateTime fromDate, DateTime toDate)
@@ -143,18 +144,14 @@ namespace helloserve.ExchangeRatesApi.Service
 
         public async Task<ExchangeRatesRange> GetRatesForDateRangeAsync(DateTime fromDate, DateTime toDate, string baseCurrencyCode, params string[] currencyCodes)
         {
-            var internalResult = await GetRatesForUriAsync<ExchangeRatesRange_Internal>("history", fromDate, toDate, baseCurrencyCode, currencyCodes);
-            return new ExchangeRatesRange()
-            {
-                Base = internalResult.Base,
-                StartAt = internalResult.Start_At,
-                EndAt = internalResult.End_At,
-                RateRanges = internalResult.Rates
-            };
+            var response = await GetRatesForUriAsync<ExchangeRatesRangeResponse>("timeseries", fromDate, toDate, baseCurrencyCode, currencyCodes).ConfigureAwait(false);
+            return new ExchangeRatesRange(response);
         }
 
         private async Task<T> GetRatesForUriAsync<T>(string relativeUri, DateTime? fromDate, DateTime? toDate, string baseCurrencyCode, params string[] currencyCodes)
+            where T : ApiResponse
         {
+            var stopwatch = Stopwatch.StartNew();
             try
             {
                 List<KeyValuePair<string, string>> queryParameters = new List<KeyValuePair<string, string>>();
@@ -164,8 +161,8 @@ namespace helloserve.ExchangeRatesApi.Service
                 {
                     if (fromDate.HasValue && toDate.HasValue)
                     {
-                        queryParameters.Add(new KeyValuePair<string, string>("start_at", fromDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture.DateTimeFormat)));
-                        queryParameters.Add(new KeyValuePair<string, string>("end_at", toDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture.DateTimeFormat)));
+                        queryParameters.Add(new KeyValuePair<string, string>("start_date", fromDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture.DateTimeFormat)));
+                        queryParameters.Add(new KeyValuePair<string, string>("end_date", toDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture.DateTimeFormat)));
                     }
 
                     if (!string.IsNullOrEmpty(baseCurrencyCode))
@@ -180,19 +177,18 @@ namespace helloserve.ExchangeRatesApi.Service
                 }
                 string query = QueryString.Create(queryParameters).Value;
                 Uri uri = new Uri(new Uri(options.ApiUrl), $"{relativeUri}{query}");
-                var stopwatch = Stopwatch.StartNew();
                 logger?.LogInformation($"GET {uri.AbsoluteUri}");
                 var response = await httpClient.GetAsync(uri);
-                using (Stream s = await response.Content.ReadAsStreamAsync())
-                using (StreamReader reader = new StreamReader(s))
-                using (JsonReader jreader = new JsonTextReader(reader))
+                using Stream s = await response.Content.ReadAsStreamAsync();
+                using StreamReader reader = new StreamReader(s);
+                using JsonReader jreader = new JsonTextReader(reader);
+                JsonSerializer serializer = new JsonSerializer();
+                var result = serializer.Deserialize<T>(jreader);
+                if (!result.Success)
                 {
-                    JsonSerializer serializer = new JsonSerializer();
-                    var result = serializer.Deserialize<T>(jreader);
-                    stopwatch.Stop();
-                    logger?.LogDebug($"GET completed in {stopwatch.ElapsedMilliseconds}ms");
-                    return result;
+                    throw ExchangeRatesApiException.CreateFromResponse(result.Error);
                 }
+                return result;
             }
             catch (HttpRequestException rex)
             {
@@ -204,10 +200,20 @@ namespace helloserve.ExchangeRatesApi.Service
                 logger?.LogError(aex, aex.Message);
                 throw;
             }
+            catch (ExchangeRatesApiException xex)
+            {
+                logger?.LogError(xex, $"ExchangeRateApi Exception Occured: {xex.ErrorCode} {xex.Message}");
+                throw;
+            }
             catch (Exception ex)
             {
                 logger?.LogError(ex, "Unexpected error occured while retrieving exchange rates.");
                 throw;
+            }
+            finally
+            {
+                stopwatch.Stop();
+                logger?.LogDebug($"GET completed in {stopwatch.ElapsedMilliseconds}ms");
             }
         }
     }

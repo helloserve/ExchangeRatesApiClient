@@ -38,3 +38,15 @@ the result will not includes entries for dates on which no rates were reported.
 ## API Key
 
 Version 1.1 adds support for the new `access_key` query parameter. The service (exchangeratesapi.io) recently expanded to a [multi-tier pricing structure](https://exchangeratesapi.io/pricing/), which requires you to register for an API key.
+
+## Errors
+
+The service recently changed to a success flag response model (instead of HTTP error codes), and so there is now an `ExchangeRateApiException` thrown when this flag is false. The `ErrorCode` property is enumerated according to their documentation, but it should be noted that not all errors have a code, and will be reported as _unknown_.
+
+## Limitations
+
+Their subscription tier limitations are reported through the error reponses, but broadly for the free tier (which I suspect is what most people are interested in): 
+
+* no HTTPS support, so configure the API URL accordingly.
+* doesn't support specifying a base currency, everything is reported in EUR.
+* doesn't support the `/timeseries` endpoint, e.g. the `GetRatesForDateRangeAsync` method group.

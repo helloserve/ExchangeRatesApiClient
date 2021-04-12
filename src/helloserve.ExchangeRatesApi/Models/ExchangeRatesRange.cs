@@ -8,6 +8,16 @@ namespace helloserve.ExchangeRatesApi.Models
     /// </summary>
     public class ExchangeRatesRange
     {
+        public ExchangeRatesRange() { }
+
+        internal ExchangeRatesRange(ExchangeRatesRangeResponse response) 
+        {
+            Base = response.Base;
+            StartAt = response.Start_Date;
+            EndAt = response.End_Date;
+            RateRanges = response.Rates;
+        }
+
         /// <summary>
         /// The currency that these exchange rates can be used to convert to
         /// </summary>
@@ -24,13 +34,5 @@ namespace helloserve.ExchangeRatesApi.Models
         /// The collection of dates in the range and each one's set of rates
         /// </summary>
         public Dictionary<DateTime, RatesCollection> RateRanges { get; set; }
-    }
-
-    internal class ExchangeRatesRange_Internal
-    {
-        public string Base { get; set; }
-        public DateTime Start_At { get; set; }
-        public DateTime End_At { get; set; }
-        public Dictionary<DateTime, RatesCollection> Rates { get; set; }
     }
 }
