@@ -1,13 +1,13 @@
 ﻿using helloserve.ExchangeRatesApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace helloserve.ExchangeRatesApi.Service
@@ -103,7 +103,8 @@ namespace helloserve.ExchangeRatesApi.Service
 
         public async Task<ExchangeRates> GetRatesForDateAsync(DateTime date, string baseCurrencyCode, params string[] currencyCodes)
         {
-            var response = await GetRatesForUriAsync<ExchangeRatesResponse>(date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture.DateTimeFormat), fromDate: null, toDate: null, baseCurrencyCode, currencyCodes).ConfigureAwait(false);
+            var response = await GetRatesForUriAsync<ExchangeRatesResponse>(date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture.DateTimeFormat), fromDate: null, toDate: null, baseCurrencyCode, currencyCodes)
+                .ConfigureAwait(false);
             return new ExchangeRates(response);
         }
 
@@ -178,12 +179,14 @@ namespace helloserve.ExchangeRatesApi.Service
                 string query = QueryString.Create(queryParameters).Value;
                 Uri uri = new Uri(new Uri(options.ApiUrl), $"{relativeUri}{query}");
                 logger?.LogInformation($"GET {uri.AbsoluteUri}");
-                var response = await httpClient.GetAsync(uri);
-                using Stream s = await response.Content.ReadAsStreamAsync();
-                using StreamReader reader = new StreamReader(s);
-                using JsonReader jreader = new JsonTextReader(reader);
-                JsonSerializer serializer = new JsonSerializer();
-                var result = serializer.Deserialize<T>(jreader);
+                var response = await httpClient.GetAsync(uri).ConfigureAwait(false);
+                using Stream s = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                var jsonOptions = new JsonSerializerOptions() 
+                { 
+                    PropertyNameCaseInsensitive = true, 
+                    NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.Strict
+                };
+                var result = await JsonSerializer.DeserializeAsync<T>(s, jsonOptions).ConfigureAwait(false);
                 if (!result.Success)
                 {
                     throw ExchangeRatesApiException.CreateFromResponse(result.Error);

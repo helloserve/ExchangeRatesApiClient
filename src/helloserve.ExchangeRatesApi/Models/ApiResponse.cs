@@ -6,13 +6,14 @@ namespace helloserve.ExchangeRatesApi.Models
     internal class ApiResponse
     {
         public bool Success { get; set; }
-        public ApiResponseError? Error { get; set; }
+        public ApiResponseError Error { get; set; }
         public string Base { get; set; }
     }
 
     internal class ApiResponseError
     {
-        public string Code { get; set; }
+        public int Code { get; set; }
+        public string Type { get; set; }
         public string Info { get; set; }
     }
 

@@ -13,12 +13,12 @@ namespace helloserve.ExchangeRatesApi
 
         internal static ExchangeRatesApiException CreateFromResponse(Models.ApiResponseError error)
         {
-            if (int.TryParse(error.Code, out int codeValue))
+            if (error != null)
             {
-                return new ExchangeRatesApiException((ExchangeRatesApiErrorCode)codeValue, error.Info);
+                return new ExchangeRatesApiException((ExchangeRatesApiErrorCode)error.Code, error.Info);
             }
 
-            return new ExchangeRatesApiException(ExchangeRatesApiErrorCode.Unknown, $"Unknown error occured: {error.Code} {error.Info}");
+            return new ExchangeRatesApiException(ExchangeRatesApiErrorCode.Unknown, $"Unknown error occured: {error?.Code.ToString() ?? "??"} {error?.Info ?? "??"}");
         }
     }
 }

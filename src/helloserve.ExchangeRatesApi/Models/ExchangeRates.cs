@@ -7,7 +7,10 @@ namespace helloserve.ExchangeRatesApi.Models
     /// </summary>
     public class ExchangeRates
     {
-        public ExchangeRates() { }
+        public ExchangeRates() 
+        {
+            Rates = new RatesCollection();
+        }
 
         internal ExchangeRates(ExchangeRatesResponse response)
         {
