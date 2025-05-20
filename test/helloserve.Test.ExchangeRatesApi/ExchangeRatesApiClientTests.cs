@@ -1,13 +1,13 @@
-using helloserve.ExchangeRatesApi;
-using helloserve.ExchangeRatesApi.Models;
-using helloserve.ExchangeRatesApi.Service;
-using Microsoft.Extensions.Configuration;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using helloserve.ExchangeRatesApi;
+using helloserve.ExchangeRatesApi.Models;
+using helloserve.ExchangeRatesApi.Service;
+using Microsoft.Extensions.Configuration;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace helloserve.Test.ExchangeRateApi
 {
@@ -472,6 +472,7 @@ namespace helloserve.Test.ExchangeRateApi
         }
 
         [TestMethod]
+        [Ignore("Run test explicitly")]
         public async Task GetActualLatestRates()
         {
             //arrange
@@ -488,6 +489,7 @@ namespace helloserve.Test.ExchangeRateApi
         }
 
         [TestMethod]
+        [Ignore("Run test explicitly")]
         public async Task GetActualHistoricRates()
         {
             //arrange
@@ -504,6 +506,7 @@ namespace helloserve.Test.ExchangeRateApi
         }
 
         [TestMethod]
+        [Ignore("Run test explicitly")]
         public async Task GetActualTimeSeriesRates()
         {
             //arrange

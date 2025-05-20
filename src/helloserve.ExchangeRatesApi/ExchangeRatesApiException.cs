@@ -1,24 +1,23 @@
 ﻿using System;
 
-namespace helloserve.ExchangeRatesApi
+namespace helloserve.ExchangeRatesApi;
+
+public class ExchangeRatesApiException : Exception
 {
-    public class ExchangeRatesApiException : Exception
+    public ExchangeRatesApiErrorCode ErrorCode { get; set; }
+
+    public ExchangeRatesApiException(ExchangeRatesApiErrorCode errorCode, string info) : base(info)
     {
-        public ExchangeRatesApiErrorCode ErrorCode { get; set; }
+        ErrorCode = errorCode;
+    }
 
-        public ExchangeRatesApiException(ExchangeRatesApiErrorCode errorCode, string info) : base(info)
+    internal static ExchangeRatesApiException CreateFromResponse(Models.ApiResponseError error)
+    {
+        if (error != null)
         {
-            ErrorCode = errorCode;
+            return new ExchangeRatesApiException((ExchangeRatesApiErrorCode)error.Code, error.Info);
         }
 
-        internal static ExchangeRatesApiException CreateFromResponse(Models.ApiResponseError error)
-        {
-            if (error != null)
-            {
-                return new ExchangeRatesApiException((ExchangeRatesApiErrorCode)error.Code, error.Info);
-            }
-
-            return new ExchangeRatesApiException(ExchangeRatesApiErrorCode.Unknown, $"Unknown error occured: {error?.Code.ToString() ?? "??"} {error?.Info ?? "??"}");
-        }
+        return new ExchangeRatesApiException(ExchangeRatesApiErrorCode.Unknown, $"Unknown error occured: {error?.Code.ToString() ?? "??"} {error?.Info ?? "??"}");
     }
 }
